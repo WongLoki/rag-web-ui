@@ -50,15 +50,20 @@ class PreviewResult(BaseModel):
     total_chunks: int
 
 def get_embeddings():
-    if settings.EMBEDDINGS_TYPE == "ollama":
+    provider = settings.DEFAULT_LLM_PROVIDER
+    
+    if provider == "ollama":
+        config = settings.OLLAMA_PROVIDER
         return OllamaEmbeddings(
-            base_url=settings.EMBEDDINGS_BASE_URL,
-            model=settings.EMBEDDINGS_MODEL
+            base_url=config.base_url,
+            model=config.embedding_model
         )
-    else:
+    else:  # openai
+        config = settings.OPENAI_PROVIDER
         return OpenAIEmbeddings(
-            openai_api_key="EMPTY",
-            openai_api_base=settings.EMBEDDINGS_BASE_URL
+            openai_api_key=config.api_key,
+            openai_api_base=config.base_url,
+            model=config.embedding_model
         )
 
 async def process_document(file_path: str, file_name: str, kb_id: int, document_id: int, chunk_size: int = 1000, chunk_overlap: int = 200) -> None:

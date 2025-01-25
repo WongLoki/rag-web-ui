@@ -159,24 +159,24 @@ def delete_chat(
     db.commit()
     return {"status": "success"}
 
-@router.get("/models", response_model=List[ModelConfigResponse])
-def get_available_models(
-    current_user: User = Depends(get_current_user)
-) -> List[ModelConfigResponse]:
-    try:
-        raw_models = settings.MODEL_CONFIGS
-        return [
-            ModelConfigResponse(
-                id=m.id,
-                name=m.name,
-                type=m.type,
-                description=m.description
-            )
-            for m in raw_models
-        ]
-    except Exception as e:
-        print(f"Error: {str(e)}")
-        raise HTTPException(
-            status_code=500,
-            detail=str(e)
-        )
+# @router.get("/models", response_model=List[ModelConfigResponse])
+# def get_available_models(
+#     current_user: User = Depends(get_current_user)
+# ) -> List[ModelConfigResponse]:
+#     try:
+#         raw_models = settings.MODEL_CONFIGS
+#         return [
+#             ModelConfigResponse(
+#                 id=m.id,
+#                 name=m.name,
+#                 type=m.type,
+#                 description=m.description
+#             )
+#             for m in raw_models
+#         ]
+#     except Exception as e:
+#         print(f"Error: {str(e)}")
+#         raise HTTPException(
+#             status_code=500,
+#             detail=str(e)
+#         )

@@ -35,25 +35,25 @@ export default function NewChatPage() {
   const [models, setModels] = useState<ModelConfig[]>([]);
 
   
-  const fetchModels = async () => {
-    try {
-      const data = await api.get<ModelConfig[]>("/api/chat/models");
-      console.log('Models data:', data);
-      setModels(data);
-    } catch (error) {
-      console.error('Error details:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch models",
-        variant: "destructive",
-      });
-    }
-  };
+  // const fetchModels = async () => {
+  //   try {
+  //     const data = await api.get<ModelConfig[]>("/api/chat/models");
+  //     console.log('Models data:', data);
+  //     setModels(data);
+  //   } catch (error) {
+  //     console.error('Error details:', error);
+  //     toast({
+  //       title: "Error",
+  //       description: "Failed to fetch models",
+  //       variant: "destructive",
+  //     });
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchKnowledgeBases();
-    fetchModels();
-  }, []);
+  // useEffect(() => {
+  //   fetchKnowledgeBases();
+  //   fetchModels();
+  // }, []);
 
   const fetchKnowledgeBases = async () => {
     try {
@@ -78,10 +78,10 @@ export default function NewChatPage() {
       setError("Please select a knowledge base");
       return;
     }
-    if (!selectedModel) {
-      setError("Please select a model");
-      return;
-    }
+    // if (!selectedModel) {
+    //   setError("Please select a model");
+    //   return;
+    // }
 
     setError("");
     setIsSubmitting(true);
@@ -90,7 +90,7 @@ export default function NewChatPage() {
       const data = await api.post("/api/chat", {
         title,
         knowledge_base_ids: [selectedKB],
-        model: selectedModel
+        // model: selectedModel
       });
 
       router.push(`/dashboard/chat/${data.id}`);
@@ -167,7 +167,7 @@ export default function NewChatPage() {
             />
           </div>
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <label className="text-sm font-medium">Select Model</label>
             <Select onValueChange={setSelectedModel} value={selectedModel}>
               <SelectTrigger>
@@ -186,7 +186,7 @@ export default function NewChatPage() {
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
 
           <div className="space-y-2">
             <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">

@@ -13,7 +13,8 @@ class LLMProviderConfig(BaseModel):
     type: Literal["openai", "ollama"]
     base_url: str
     api_key: str | None = None
-    default_model: str
+    chat_model: str
+    embedding_model: str
 
 class ModelConfig(BaseModel):
     id: str
@@ -74,44 +75,52 @@ class Settings(BaseSettings):
     MINIO_SECRET_KEY: str = os.getenv("MINIO_SECRET_KEY", "minioadmin")
     MINIO_BUCKET_NAME: str = os.getenv("MINIO_BUCKET_NAME", "documents")
 
+    # Ollama Embeddings Settings
+    OLLAMA_EMBEDDINGS_MODEL: str = os.getenv("OLLAMA_EMBEDDING_MODEL", "nomic-embed-text")
+    
     # LLM Provider Settings
     OPENAI_PROVIDER: LLMProviderConfig = LLMProviderConfig(
         type="openai",
         base_url=os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1"),
         api_key=os.getenv("OPENAI_API_KEY"),
-        default_model=os.getenv("OPENAI_MODEL", "gpt-4")
+        chat_model=os.getenv("OPENAI_CHAT_MODEL", "gpt-4"),
+        embedding_model=os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
     )
 
     OLLAMA_PROVIDER: LLMProviderConfig = LLMProviderConfig(
         type="ollama",
         base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1"),
         api_key="none",
-        default_model=os.getenv("OLLAMA_MODEL", "deepseek-r1")
+        chat_model=os.getenv("OLLAMA_CHAT_MODEL", "deepseek-r1"),
+        embedding_model=os.getenv("OLLAMA_EMBEDDING_MODEL", "nomic-embed-text")
     )
 
     DEFAULT_LLM_PROVIDER: Literal["openai", "ollama"] = os.getenv("DEFAULT_LLM_PROVIDER", "ollama")
 
-    # Model settings
-    MODEL_CONFIGS: List[ModelConfig] = [
-        ModelConfig(
-            id="gpt-4",
-            name="GPT-4 (OpenAI)",
-            type="openai",
-            description="OpenAI's GPT-4 model",
-            provider_config=OPENAI_PROVIDER
-        ),
-        ModelConfig(
-            id="deepseek-r1",
-            name="Deepseek (Ollama)",
-            type="ollama",
-            description="Deepseek model via local Ollama",
-            provider_config=OLLAMA_PROVIDER
-        )
-    ]
+    # Vector Store Settings
+    VECTOR_STORE_TYPE: str = "chroma"
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        logger.info("Initializing settings")
-        logger.info("MODEL_CONFIGS: %s", self.MODEL_CONFIGS)
+    # Model settings
+    # MODEL_CONFIGS: List[ModelConfig] = [
+    #     ModelConfig(
+    #         id="gpt-4",
+    #         name="GPT-4 (OpenAI)",
+    #         type="openai",
+    #         description="OpenAI's GPT-4 model",
+    #         provider_config=OPENAI_PROVIDER
+    #     ),
+    #     ModelConfig(
+    #         id="deepseek-r1",
+    #         name="Deepseek (Ollama)",
+    #         type="ollama",
+    #         description="Deepseek model via local Ollama",
+    #         provider_config=OLLAMA_PROVIDER
+    #     )
+    # ]
+
+    # def __init__(self, **kwargs):
+    #     super().__init__(**kwargs)
+    #     logger.info("Initializing settings")
+    #     logger.info("MODEL_CONFIGS: %s", self.MODEL_CONFIGS)
 
 settings = Settings() 
