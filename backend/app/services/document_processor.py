@@ -31,6 +31,8 @@ from minio.error import MinioException
 from minio import Minio
 from minio.commonconfig import CopySource
 from app.services.vector_store import VectorStoreFactory
+from openai import OpenAI
+from langchain_community.embeddings import OllamaEmbeddings
 
 class UploadResult(BaseModel):
     file_path: str
@@ -47,6 +49,18 @@ class PreviewResult(BaseModel):
     chunks: List[TextChunk]
     total_chunks: int
 
+def get_embeddings():
+    if settings.EMBEDDINGS_TYPE == "ollama":
+        return OllamaEmbeddings(
+            base_url=settings.EMBEDDINGS_BASE_URL,
+            model=settings.EMBEDDINGS_MODEL
+        )
+    else:
+        return OpenAIEmbeddings(
+            openai_api_key="EMPTY",
+            openai_api_base=settings.EMBEDDINGS_BASE_URL
+        )
+
 async def process_document(file_path: str, file_name: str, kb_id: int, document_id: int, chunk_size: int = 1000, chunk_overlap: int = 200) -> None:
     """Process document and store in vector database with incremental updates"""
     logger = logging.getLogger(__name__)
@@ -55,11 +69,8 @@ async def process_document(file_path: str, file_name: str, kb_id: int, document_
         preview_result = await preview_document(file_path, chunk_size, chunk_overlap)
         
         # Initialize embeddings
-        logger.info("Initializing OpenAI embeddings...")
-        embeddings = OpenAIEmbeddings(
-            openai_api_key=settings.OPENAI_API_KEY,
-            openai_api_base=settings.OPENAI_API_BASE
-        )
+        logger.info("Initializing embeddings...")
+        embeddings = get_embeddings()
         
         logger.info(f"Initializing vector store with collection: kb_{kb_id}")
         vector_store = VectorStoreFactory.create(
@@ -303,10 +314,7 @@ async def process_document_background(
             
             # 3. 创建向量存储
             logger.info(f"Task {task_id}: Initializing vector store")
-            embeddings = OpenAIEmbeddings(
-                openai_api_key=settings.OPENAI_API_KEY,
-                openai_api_base=settings.OPENAI_API_BASE
-            )
+            embeddings = get_embeddings()
             
             vector_store = VectorStoreFactory.create(
                 store_type=settings.VECTOR_STORE_TYPE,

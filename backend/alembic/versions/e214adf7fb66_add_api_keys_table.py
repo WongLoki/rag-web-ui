@@ -23,7 +23,7 @@ def upgrade() -> None:
     op.create_table(
         'api_keys',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('key', sa.String(length=64), nullable=False),
+        sa.Column('key', sa.String(length=128), nullable=False),
         sa.Column('name', sa.String(length=255), nullable=False),
         sa.Column('user_id', sa.Integer(), nullable=False),
         sa.Column('is_active', sa.Boolean(), nullable=False, default=True),

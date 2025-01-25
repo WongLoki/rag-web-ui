@@ -9,11 +9,18 @@ from langchain.chains import create_history_aware_retriever, create_retrieval_ch
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, PromptTemplate
 from langchain_core.messages import HumanMessage, AIMessage
-from app.core.config import settings
+from app.core.config import settings, ModelConfig
 from app.models.chat import Message
 from app.models.knowledge import KnowledgeBase, Document
 from langchain.globals import set_verbose, set_debug
 from app.services.vector_store import VectorStoreFactory
+import logging
+from langchain_community.embeddings import OllamaEmbeddings
+from langchain_core.runnables import RunnablePassthrough
+
+# 配置日志
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 set_verbose(True)
 set_debug(True)
@@ -23,9 +30,13 @@ async def generate_response(
     messages: dict,
     knowledge_base_ids: List[int],
     chat_id: int,
+    model: str,
     db: Session
 ) -> AsyncGenerator[str, None]:
     try:
+        logger.info(f"Starting to process query: {query}")
+        logger.info(f"Knowledge base IDs: {knowledge_base_ids}")
+        
         # Create user message
         user_message = Message(
             content=query,
@@ -34,6 +45,7 @@ async def generate_response(
         )
         db.add(user_message)
         db.commit()
+        logger.info("User message created")
         
         # Create bot message placeholder
         bot_message = Message(
@@ -52,23 +64,26 @@ async def generate_response(
         )
         
         # Initialize embeddings
-        embeddings = OpenAIEmbeddings(
-            openai_api_key=settings.OPENAI_API_KEY,
-            openai_api_base=settings.OPENAI_API_BASE
+        logger.info("Initializing embeddings with Ollama")
+        embeddings = OllamaEmbeddings(
+            base_url=settings.OLLAMA_BASE_URL,  # 使用 base_url 而不是 api_base
+            model=settings.OLLAMA_EMBEDDING_MODEL
         )
         
-        # Create a vector store for each knowledge base
+        # Create vector stores
         vector_stores = []
         for kb in knowledge_bases:
+            logger.info(f"Processing knowledge base: {kb.id}")
             documents = db.query(Document).filter(Document.knowledge_base_id == kb.id).all()
+            logger.info(f"Found {len(documents)} documents for KB {kb.id}")
+            
             if documents:
-                # Use the factory to create the appropriate vector store
                 vector_store = VectorStoreFactory.create(
-                    store_type=settings.VECTOR_STORE_TYPE,  # 'chroma' or other supported types
+                    store_type=settings.VECTOR_STORE_TYPE,
                     collection_name=f"kb_{kb.id}",
                     embedding_function=embeddings,
                 )
-                print(f"Collection {f'kb_{kb.id}'} count:", vector_store._store._collection.count())
+                logger.info(f"Vector store created for KB {kb.id}")
                 vector_stores.append(vector_store)
         
         if not vector_stores:
@@ -82,14 +97,29 @@ async def generate_response(
         # Use first vector store for now
         retriever = vector_stores[0].as_retriever()
         
-        # Initialize the language model
-        llm = ChatOpenAI(
-            temperature=0,
-            streaming=True,
-            model=settings.OPENAI_MODEL,
-            openai_api_key=settings.OPENAI_API_KEY,
-            openai_api_base=settings.OPENAI_API_BASE
+        # Initialize LLM
+        logger.info(f"Initializing LLM with model: {model}")
+        model_config = next(
+            (m for m in settings.MODEL_CONFIGS if m.id == model),
+            settings.MODEL_CONFIGS[0]
         )
+
+        if model_config.type == "openai":
+            llm = ChatOpenAI(
+                temperature=0,
+                streaming=True,
+                model=model,
+                openai_api_key=settings.OPENAI_API_KEY,
+                openai_api_base=settings.OPENAI_API_BASE
+            )
+        else:  # ollama
+            llm = ChatOpenAI(
+                temperature=0,
+                streaming=True,
+                model=model,
+                openai_api_key="EMPTY",
+                openai_api_base=settings.OLLAMA_BASE_URL
+            )
 
         # Create contextualize question prompt
         contextualize_q_system_prompt = (
@@ -145,10 +175,18 @@ async def generate_response(
         )
 
         # Create retrieval chain
-        rag_chain = create_retrieval_chain(
-            history_aware_retriever,
-            question_answer_chain,
+        retrieval_chain = (
+            {
+                "context": retriever,
+                "input": RunnablePassthrough(),
+                "chat_history": lambda x: x.get("chat_history", [])
+            }
+            | question_answer_chain
         )
+
+        # 在检索链创建之前添加日志
+        logger.info("Creating retrieval chain with retriever: %s", retriever)
+        logger.info("Question answer chain: %s", question_answer_chain)
 
         # Generate response
         chat_history = []
@@ -162,49 +200,48 @@ async def generate_response(
                 chat_history.append(AIMessage(content=message["content"]))
 
         full_response = ""
-        async for chunk in rag_chain.astream({
+        # 在 astream 之前添加日志
+        logger.info("Streaming response with input: %s", {
+            "input": query,
+            "chat_history": chat_history
+        })
+        async for chunk in retrieval_chain.astream({
             "input": query,
             "chat_history": chat_history
         }):
-            if "context" in chunk:
-                serializable_context = []
-                for context in chunk["context"]:
-                    serializable_doc = {
-                        "page_content": context.page_content.replace('"', '\\"'),
-                        "metadata": context.metadata,
-                    }
-                    serializable_context.append(serializable_doc)
-                
-                # 先替换引号，再序列化
-                escaped_context = json.dumps({
-                    "context": serializable_context
-                })
-
-                # 转成 base64
-                base64_context = base64.b64encode(escaped_context.encode()).decode()
-
-                # 连接符号
-                separator = "__LLM_RESPONSE__"
-                
-                yield f'0:"{base64_context}{separator}"\n'
-                full_response += base64_context + separator
-
-            if "answer" in chunk:
-                answer_chunk = chunk["answer"]
-                full_response += answer_chunk
-                # Escape quotes and use json.dumps to properly handle special characters
-                escaped_chunk = (answer_chunk
-                    .replace('"', '\\"')
-                    .replace('\n', '\\n'))
+            # 检查 chunk 的类型
+            if isinstance(chunk, str):
+                # 如果是字符串，直接输出
+                escaped_chunk = chunk.replace('"', '\\"').replace('\n', '\\n')
                 yield f'0:"{escaped_chunk}"\n'
-            
+                full_response += chunk
+            elif isinstance(chunk, dict):
+                # 如果是字典，按原来的逻辑处理
+                if "context" in chunk:
+                    serializable_context = []
+                    for context in chunk["context"]:
+                        serializable_doc = {
+                            "page_content": context.page_content.replace('"', '\\"'),
+                            "metadata": context.metadata,
+                        }
+                        serializable_context.append(serializable_doc)
+                    
+                    escaped_context = json.dumps({
+                        "context": serializable_context
+                    })
+                    base64_context = base64.b64encode(escaped_context.encode()).decode()
+                    separator = "__LLM_RESPONSE__"
+                    
+                    yield f'0:"{base64_context}{separator}"\n'
+                    full_response += base64_context + separator
+
         # Update bot message content
         bot_message.content = full_response
         db.commit()
             
     except Exception as e:
+        logger.error(f"Error generating response: {str(e)}", exc_info=True)
         error_message = f"Error generating response: {str(e)}"
-        print(error_message)
         yield '3:{text}\n'.format(text=error_message)
         
         # Update bot message with error

@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import List, Any, Dict
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session, joinedload
@@ -11,10 +11,15 @@ from app.schemas.chat import (
     ChatResponse,
     ChatUpdate,
     MessageCreate,
-    MessageResponse
+    MessageResponse,
+    ModelConfigResponse
 )
 from app.api.api_v1.auth import get_current_user
 from app.services.chat_service import generate_response
+from app.core.config import settings, ModelConfig
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -153,3 +158,25 @@ def delete_chat(
     db.delete(chat)
     db.commit()
     return {"status": "success"}
+
+@router.get("/models", response_model=List[ModelConfigResponse])
+def get_available_models(
+    current_user: User = Depends(get_current_user)
+) -> List[ModelConfigResponse]:
+    try:
+        raw_models = settings.MODEL_CONFIGS
+        return [
+            ModelConfigResponse(
+                id=m.id,
+                name=m.name,
+                type=m.type,
+                description=m.description
+            )
+            for m in raw_models
+        ]
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )

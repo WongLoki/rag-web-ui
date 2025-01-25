@@ -82,11 +82,13 @@ export async function fetchApi(url: string, options: FetchOptions = {}) {
 
 // Helper methods for common HTTP methods
 export const api = {
-  get: (url: string, options?: Omit<FetchOptions, 'method'>) =>
-    fetchApi(url, { ...options, method: 'GET' }),
+  get: async <T = any>(url: string, options?: Omit<FetchOptions, 'method'>) => {
+    return fetchApi(url, { ...options, method: 'GET' });
+  },
 
-  post: (url: string, data?: any, options?: Omit<FetchOptions, 'method'>) =>
-    fetchApi(url, { ...options, method: 'POST', data }),
+  post: async <T = any>(url: string, data?: any, options?: Omit<FetchOptions, 'method'>) => {
+    return fetchApi(url, { ...options, method: 'POST', data });
+  },
 
   put: (url: string, data?: any, options?: Omit<FetchOptions, 'method'>) =>
     fetchApi(url, { ...options, method: 'PUT', data }),

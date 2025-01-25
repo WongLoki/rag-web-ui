@@ -36,4 +36,13 @@ class ChatResponse(ChatBase):
     knowledge_base_ids: List[int] = []
 
     class Config:
+        from_attributes = True
+
+class ModelConfigResponse(BaseModel):
+    id: str
+    name: str
+    type: str
+    description: str
+
+    class Config:
         from_attributes = True 

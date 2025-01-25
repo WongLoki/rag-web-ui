@@ -1,0 +1,169 @@
+[33mWARNING[0m:  [25-01-2025 21:30:08] chroma_server_nofile is set to 65535, but this is less than current soft limit of 1048575. chroma_server_nofile will not be set.
+[32mINFO[0m:     [25-01-2025 21:30:08] Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+[36mDEBUG[0m:    [25-01-2025 21:30:08] Starting component System
+[36mDEBUG[0m:    [25-01-2025 21:30:08] Starting component OpenTelemetryClient
+[36mDEBUG[0m:    [25-01-2025 21:30:08] Starting component SqliteDB
+[36mDEBUG[0m:    [25-01-2025 21:30:08] Starting component SimpleQuotaEnforcer
+[36mDEBUG[0m:    [25-01-2025 21:30:08] Starting component Posthog
+[36mDEBUG[0m:    [25-01-2025 21:30:08] Starting component SimpleRateLimitEnforcer
+[36mDEBUG[0m:    [25-01-2025 21:30:08] Starting component LocalSegmentManager
+[36mDEBUG[0m:    [25-01-2025 21:30:08] Starting component LocalExecutor
+[36mDEBUG[0m:    [25-01-2025 21:30:08] Starting component SegmentAPI
+[32mINFO[0m:     [25-01-2025 21:30:08] Started server process [[36m54099[0m]
+[32mINFO[0m:     [25-01-2025 21:30:08] Waiting for application startup.
+[32mINFO[0m:     [25-01-2025 21:30:08] Application startup complete.
+[32mINFO[0m:     [25-01-2025 21:30:08] Uvicorn running on [1mhttp://0.0.0.0:8001[0m (Press CTRL+C to quit)
+[32mINFO[0m:     [25-01-2025 21:30:49] 127.0.0.1:57427 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:30:49] 127.0.0.1:57429 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:30:49] 127.0.0.1:57429 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:30:49] 127.0.0.1:57427 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:30:54] 127.0.0.1:57438 - "GET /api/v2/pre-flight-checks HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 21:30:54] Starting component PersistentLocalHnswSegment
+[32mINFO[0m:     [25-01-2025 21:30:54] 127.0.0.1:57438 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections/7aa9f9f3-3856-40ee-8c84-d23dcfa01fc1/upsert HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:31:22] 127.0.0.1:57491 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:31:22] 127.0.0.1:57493 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:31:22] 127.0.0.1:57493 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 21:31:22] Collection kb_1 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 21:31:22] 127.0.0.1:57491 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:31:22] 127.0.0.1:57491 - "GET /api/v2/tenants/default_tenant/databases/default_database/collections/7aa9f9f3-3856-40ee-8c84-d23dcfa01fc1/count HTTP/1.1" 200
+[33mWARNING[0m:  [25-01-2025 21:31:26] Number of requested results 4 is greater than number of elements in index 3, updating n_results = 3
+[32mINFO[0m:     [25-01-2025 21:31:26] 127.0.0.1:57491 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections/7aa9f9f3-3856-40ee-8c84-d23dcfa01fc1/query HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:55:07] 127.0.0.1:59978 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:55:07] 127.0.0.1:59980 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:55:07] 127.0.0.1:59980 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 21:55:07] Collection kb_1 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 21:55:07] 127.0.0.1:59978 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:55:07] 127.0.0.1:59978 - "GET /api/v2/tenants/default_tenant/databases/default_database/collections/7aa9f9f3-3856-40ee-8c84-d23dcfa01fc1/count HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:56:04] 127.0.0.1:60111 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:56:04] 127.0.0.1:60113 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:56:04] 127.0.0.1:60113 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 21:56:04] Collection kb_1 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 21:56:04] 127.0.0.1:60111 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:56:04] 127.0.0.1:60111 - "GET /api/v2/tenants/default_tenant/databases/default_database/collections/7aa9f9f3-3856-40ee-8c84-d23dcfa01fc1/count HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:58:52] 127.0.0.1:60637 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:58:52] 127.0.0.1:60639 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:58:52] 127.0.0.1:60639 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 21:58:52] Collection kb_1 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 21:58:52] 127.0.0.1:60637 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 21:58:52] 127.0.0.1:60637 - "GET /api/v2/tenants/default_tenant/databases/default_database/collections/7aa9f9f3-3856-40ee-8c84-d23dcfa01fc1/count HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:02:04] 127.0.0.1:61091 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:02:04] 127.0.0.1:61093 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:02:04] 127.0.0.1:61093 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:02:04] Collection kb_1 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 22:02:04] 127.0.0.1:61091 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:07:33] 127.0.0.1:61760 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:07:33] 127.0.0.1:61762 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:07:33] 127.0.0.1:61762 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:07:33] Collection kb_1 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 22:07:33] 127.0.0.1:61760 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:07:42] 127.0.0.1:61789 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:07:42] 127.0.0.1:61791 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:07:42] 127.0.0.1:61791 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:07:42] Collection kb_1 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 22:07:42] 127.0.0.1:61789 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:08:05] 127.0.0.1:61855 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:08:05] 127.0.0.1:61857 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:08:05] 127.0.0.1:61857 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:08:05] Collection kb_1 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 22:08:05] 127.0.0.1:61855 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:09:51] 127.0.0.1:62081 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:09:51] 127.0.0.1:62083 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:09:51] 127.0.0.1:62083 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:09:51] Collection kb_1 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 22:09:51] 127.0.0.1:62081 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:10:42] 127.0.0.1:62160 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:10:42] 127.0.0.1:62162 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:10:42] 127.0.0.1:62162 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:10:42] Collection kb_1 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 22:10:42] 127.0.0.1:62160 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:11:30] 127.0.0.1:62319 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:11:30] 127.0.0.1:62321 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:11:30] 127.0.0.1:62321 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:11:30] 127.0.0.1:62319 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:14:28] 127.0.0.1:62918 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:14:28] 127.0.0.1:62920 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:14:28] 127.0.0.1:62920 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:14:28] 127.0.0.1:62918 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:20:58] 127.0.0.1:63519 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:20:58] 127.0.0.1:63521 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:20:58] 127.0.0.1:63521 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:20:58] Collection kb_1 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 22:20:58] 127.0.0.1:63519 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:21:05] 127.0.0.1:63552 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:21:05] 127.0.0.1:63554 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:21:05] 127.0.0.1:63554 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:21:05] Collection kb_2 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 22:21:05] 127.0.0.1:63552 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:21:09] 127.0.0.1:63562 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:21:09] 127.0.0.1:63564 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:21:09] 127.0.0.1:63564 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:21:09] Collection kb_3 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 22:21:09] 127.0.0.1:63562 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:22:55] 127.0.0.1:63878 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:22:55] 127.0.0.1:63880 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:22:55] 127.0.0.1:63880 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:22:55] 127.0.0.1:63878 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:22:57] 127.0.0.1:63878 - "GET /api/v2/pre-flight-checks HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:22:57] Starting component PersistentLocalHnswSegment
+[32mINFO[0m:     [25-01-2025 22:22:57] 127.0.0.1:63878 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections/e8f3e49e-62a9-44a7-a37a-59c91b71158b/upsert HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:23:37] 127.0.0.1:63963 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:23:37] 127.0.0.1:63965 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:23:37] 127.0.0.1:63965 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:23:37] Collection kb_5 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 22:23:37] 127.0.0.1:63963 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:24:50] 127.0.0.1:64052 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:24:50] 127.0.0.1:64054 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:24:50] 127.0.0.1:64054 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:24:50] Collection kb_5 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 22:24:50] 127.0.0.1:64052 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[33mWARNING[0m:  [25-01-2025 22:24:50] Number of requested results 4 is greater than number of elements in index 3, updating n_results = 3
+[32mINFO[0m:     [25-01-2025 22:24:50] 127.0.0.1:64052 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections/e8f3e49e-62a9-44a7-a37a-59c91b71158b/query HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:25:49] 127.0.0.1:64130 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:25:49] 127.0.0.1:64133 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:25:49] 127.0.0.1:64133 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:25:49] Collection kb_5 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 22:25:49] 127.0.0.1:64130 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[33mWARNING[0m:  [25-01-2025 22:25:49] Number of requested results 4 is greater than number of elements in index 3, updating n_results = 3
+[32mINFO[0m:     [25-01-2025 22:25:49] 127.0.0.1:64130 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections/e8f3e49e-62a9-44a7-a37a-59c91b71158b/query HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:27:05] 127.0.0.1:64503 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:27:05] 127.0.0.1:64505 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:27:05] 127.0.0.1:64505 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:27:05] Collection kb_5 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 22:27:05] 127.0.0.1:64503 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[33mWARNING[0m:  [25-01-2025 22:27:05] Number of requested results 4 is greater than number of elements in index 3, updating n_results = 3
+[32mINFO[0m:     [25-01-2025 22:27:05] 127.0.0.1:64503 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections/e8f3e49e-62a9-44a7-a37a-59c91b71158b/query HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:28:09] 127.0.0.1:64627 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:28:09] 127.0.0.1:64629 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:28:09] 127.0.0.1:64629 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:28:09] Collection kb_5 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 22:28:09] 127.0.0.1:64627 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[33mWARNING[0m:  [25-01-2025 22:28:09] Number of requested results 4 is greater than number of elements in index 3, updating n_results = 3
+[32mINFO[0m:     [25-01-2025 22:28:09] 127.0.0.1:64627 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections/e8f3e49e-62a9-44a7-a37a-59c91b71158b/query HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:29:30] 127.0.0.1:64769 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:29:30] 127.0.0.1:64771 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:29:30] 127.0.0.1:64771 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:29:30] Collection kb_5 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 22:29:30] 127.0.0.1:64769 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[33mWARNING[0m:  [25-01-2025 22:29:30] Number of requested results 4 is greater than number of elements in index 3, updating n_results = 3
+[32mINFO[0m:     [25-01-2025 22:29:30] 127.0.0.1:64769 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections/e8f3e49e-62a9-44a7-a37a-59c91b71158b/query HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:31:47] 127.0.0.1:65041 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:31:47] 127.0.0.1:65043 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:31:47] 127.0.0.1:65043 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:31:47] Collection kb_5 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 22:31:47] 127.0.0.1:65041 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[33mWARNING[0m:  [25-01-2025 22:31:48] Number of requested results 4 is greater than number of elements in index 3, updating n_results = 3
+[32mINFO[0m:     [25-01-2025 22:31:48] 127.0.0.1:65041 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections/e8f3e49e-62a9-44a7-a37a-59c91b71158b/query HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:34:57] 127.0.0.1:49161 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:34:57] 127.0.0.1:49163 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:34:57] 127.0.0.1:49163 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:34:57] Collection kb_5 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 22:34:57] 127.0.0.1:49161 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[33mWARNING[0m:  [25-01-2025 22:34:58] Number of requested results 4 is greater than number of elements in index 3, updating n_results = 3
+[32mINFO[0m:     [25-01-2025 22:34:58] 127.0.0.1:49161 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections/e8f3e49e-62a9-44a7-a37a-59c91b71158b/query HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:36:16] 127.0.0.1:49270 - "GET /api/v2/auth/identity HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:36:16] 127.0.0.1:49272 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+[32mINFO[0m:     [25-01-2025 22:36:16] 127.0.0.1:49272 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+[36mDEBUG[0m:    [25-01-2025 22:36:16] Collection kb_5 already exists, returning existing collection.
+[32mINFO[0m:     [25-01-2025 22:36:16] 127.0.0.1:49270 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections HTTP/1.1" 200
+[33mWARNING[0m:  [25-01-2025 22:36:16] Number of requested results 4 is greater than number of elements in index 3, updating n_results = 3
+[32mINFO[0m:     [25-01-2025 22:36:16] 127.0.0.1:49270 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections/e8f3e49e-62a9-44a7-a37a-59c91b71158b/query HTTP/1.1" 200

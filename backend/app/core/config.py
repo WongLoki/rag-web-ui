@@ -1,9 +1,37 @@
 from pydantic_settings import BaseSettings
-from typing import Optional, List
+from typing import Optional, List, Literal
 import os
 from dotenv import load_dotenv
+from pydantic import BaseModel
+import logging
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
+
+class LLMProviderConfig(BaseModel):
+    type: Literal["openai", "ollama"]
+    base_url: str
+    api_key: str | None = None
+    default_model: str
+
+class ModelConfig(BaseModel):
+    id: str
+    name: str
+    type: Literal["openai", "ollama"]
+    description: str
+    provider_config: LLMProviderConfig
+
+    class Config:
+        from_attributes = True
+        json_schema_extra = {
+            "example": {
+                "id": "gpt-4o",
+                "name": "GPT-4 (OpenAI)",
+                "type": "openai",
+                "description": "OpenAI's GPT-4 model"
+            }
+        }
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "RAG Web UI"
@@ -46,16 +74,44 @@ class Settings(BaseSettings):
     MINIO_SECRET_KEY: str = os.getenv("MINIO_SECRET_KEY", "minioadmin")
     MINIO_BUCKET_NAME: str = os.getenv("MINIO_BUCKET_NAME", "documents")
 
-    # OpenAI settings
-    OPENAI_API_BASE: str = "https://api.openai.com/v1"
-    OPENAI_API_KEY: str
-    OPENAI_MODEL: str = "gpt-4"
-    
-    # Vector Store Settings
-    VECTOR_STORE_TYPE: str = "chroma"
-    
-    # For Qdrant
-    VECTOR_STORE_URL: str = "http://localhost:6333"
-    VECTOR_STORE_PREFER_GRPC: bool = True
-    
+    # LLM Provider Settings
+    OPENAI_PROVIDER: LLMProviderConfig = LLMProviderConfig(
+        type="openai",
+        base_url=os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1"),
+        api_key=os.getenv("OPENAI_API_KEY"),
+        default_model=os.getenv("OPENAI_MODEL", "gpt-4")
+    )
+
+    OLLAMA_PROVIDER: LLMProviderConfig = LLMProviderConfig(
+        type="ollama",
+        base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1"),
+        api_key="none",
+        default_model=os.getenv("OLLAMA_MODEL", "deepseek-r1")
+    )
+
+    DEFAULT_LLM_PROVIDER: Literal["openai", "ollama"] = os.getenv("DEFAULT_LLM_PROVIDER", "ollama")
+
+    # Model settings
+    MODEL_CONFIGS: List[ModelConfig] = [
+        ModelConfig(
+            id="gpt-4",
+            name="GPT-4 (OpenAI)",
+            type="openai",
+            description="OpenAI's GPT-4 model",
+            provider_config=OPENAI_PROVIDER
+        ),
+        ModelConfig(
+            id="deepseek-r1",
+            name="Deepseek (Ollama)",
+            type="ollama",
+            description="Deepseek model via local Ollama",
+            provider_config=OLLAMA_PROVIDER
+        )
+    ]
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        logger.info("Initializing settings")
+        logger.info("MODEL_CONFIGS: %s", self.MODEL_CONFIGS)
+
 settings = Settings() 

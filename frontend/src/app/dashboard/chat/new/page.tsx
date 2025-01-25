@@ -7,6 +7,14 @@ import DashboardLayout from "@/components/layout/dashboard-layout";
 import { api, ApiError } from "@/lib/api";
 import { useToast } from "@/components/ui/use-toast";
 import { Plus } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ModelConfig } from "@/types/chat";
 
 interface KnowledgeBase {
   id: number;
@@ -23,9 +31,28 @@ export default function NewChatPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const [selectedModel, setSelectedModel] = useState<string>("");
+  const [models, setModels] = useState<ModelConfig[]>([]);
+
+  
+  const fetchModels = async () => {
+    try {
+      const data = await api.get<ModelConfig[]>("/api/chat/models");
+      console.log('Models data:', data);
+      setModels(data);
+    } catch (error) {
+      console.error('Error details:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch models",
+        variant: "destructive",
+      });
+    }
+  };
 
   useEffect(() => {
     fetchKnowledgeBases();
+    fetchModels();
   }, []);
 
   const fetchKnowledgeBases = async () => {
@@ -51,6 +78,10 @@ export default function NewChatPage() {
       setError("Please select a knowledge base");
       return;
     }
+    if (!selectedModel) {
+      setError("Please select a model");
+      return;
+    }
 
     setError("");
     setIsSubmitting(true);
@@ -59,6 +90,7 @@ export default function NewChatPage() {
       const data = await api.post("/api/chat", {
         title,
         knowledge_base_ids: [selectedKB],
+        model: selectedModel
       });
 
       router.push(`/dashboard/chat/${data.id}`);
@@ -133,6 +165,27 @@ export default function NewChatPage() {
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               placeholder="Enter chat title"
             />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Select Model</label>
+            <Select onValueChange={setSelectedModel} value={selectedModel}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a model" />
+              </SelectTrigger>
+              <SelectContent>
+                {models.map((model) => (
+                  <SelectItem key={model.id} value={model.id}>
+                    <div className="flex flex-col">
+                      <span>{model.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {model.description}
+                      </span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
