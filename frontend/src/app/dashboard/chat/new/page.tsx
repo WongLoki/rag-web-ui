@@ -27,12 +27,14 @@ export default function NewChatPage() {
   const [knowledgeBases, setKnowledgeBases] = useState<KnowledgeBase[]>([]);
   const [selectedKB, setSelectedKB] = useState<number | null>(null);
   const [title, setTitle] = useState("");
+  const [input, setInput] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const [selectedModel, setSelectedModel] = useState<string>("");
   const [models, setModels] = useState<ModelConfig[]>([]);
+  const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
 
   
   // const fetchModels = async () => {
@@ -50,10 +52,10 @@ export default function NewChatPage() {
   //   }
   // };
 
-  // useEffect(() => {
-  //   fetchKnowledgeBases();
-  //   fetchModels();
-  // }, []);
+  useEffect(() => {
+    fetchKnowledgeBases();
+    // fetchModels();
+  }, []);
 
   const fetchKnowledgeBases = async () => {
     try {
@@ -72,28 +74,25 @@ export default function NewChatPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedKB) {
       setError("Please select a knowledge base");
       return;
     }
-    // if (!selectedModel) {
-    //   setError("Please select a model");
-    //   return;
-    // }
 
     setError("");
     setIsSubmitting(true);
 
     try {
-      const data = await api.post("/api/chat", {
-        title,
-        knowledge_base_ids: [selectedKB],
-        // model: selectedModel
+
+      const chatData = await api.post("/api/chat", {
+        title: title || "New Chat",
+        knowledge_base_ids: [selectedKB]
       });
 
-      router.push(`/dashboard/chat/${data.id}`);
+
+      router.push(`/dashboard/chat/${chatData.id}`);
     } catch (error) {
       console.error("Failed to create chat:", error);
       if (error instanceof ApiError) {

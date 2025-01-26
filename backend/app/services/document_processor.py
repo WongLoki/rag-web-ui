@@ -32,7 +32,9 @@ from minio import Minio
 from minio.commonconfig import CopySource
 from app.services.vector_store import VectorStoreFactory
 from openai import OpenAI
-from langchain_community.embeddings import OllamaEmbeddings
+from langchain_ollama import OllamaEmbeddings
+
+logger = logging.getLogger(__name__)
 
 class UploadResult(BaseModel):
     file_path: str
@@ -49,20 +51,30 @@ class PreviewResult(BaseModel):
     chunks: List[TextChunk]
     total_chunks: int
 
-def get_embeddings():
+def create_embeddings():
+    """Create embeddings based on provider configuration"""
     provider = settings.DEFAULT_LLM_PROVIDER
+    logger.info(f"Creating embeddings for provider: {provider}")
     
-    if provider == "ollama":
-        config = settings.OLLAMA_PROVIDER
-        return OllamaEmbeddings(
-            base_url=config.base_url,
-            model=config.embedding_model
-        )
-    else:  # openai
+    if provider == "openai":
         config = settings.OPENAI_PROVIDER
         return OpenAIEmbeddings(
             openai_api_key=config.api_key,
             openai_api_base=config.base_url,
+            model=config.embedding_model
+        )
+    else:  # ollama
+        config = settings.OLLAMA_PROVIDER
+        base_url = config.base_url
+        if base_url.endswith('/v1'):
+            base_url = base_url[:-3]
+            
+        logger.info(f"Creating Ollama embeddings with base_url: {base_url}")
+        logger.info(f"Will request to: {base_url}/api/embeddings")
+        logger.info(f"Ollama embedding model: {config.embedding_model}")
+        
+        return OllamaEmbeddings(
+            base_url=base_url,
             model=config.embedding_model
         )
 
@@ -75,7 +87,7 @@ async def process_document(file_path: str, file_name: str, kb_id: int, document_
         
         # Initialize embeddings
         logger.info("Initializing embeddings...")
-        embeddings = get_embeddings()
+        embeddings = create_embeddings()
         
         logger.info(f"Initializing vector store with collection: kb_{kb_id}")
         vector_store = VectorStoreFactory.create(
@@ -273,10 +285,10 @@ async def process_document_background(
         task.status = "processing"
         db.commit()
         
-        # 1. 从临时目录下载文件
+        # 1. Download files from the temporary directory
         minio_client = get_minio_client()
         try:
-            local_temp_path = f"/tmp/temp_{task_id}_{file_name}"  # 使用系统临时目录
+            local_temp_path = f"/tmp/temp_{task_id}_{file_name}"  # Use the system temporary directory
             logger.info(f"Task {task_id}: Downloading file from MinIO: {temp_path} to {local_temp_path}")
             minio_client.fget_object(
                 bucket_name=settings.MINIO_BUCKET_NAME,
@@ -290,19 +302,19 @@ async def process_document_background(
             raise Exception(error_msg)
         
         try:
-            # 2. 加载和分块文档
+           # 2. Load and Chunk Document
             _, ext = os.path.splitext(file_name)
             ext = ext.lower()
             
             logger.info(f"Task {task_id}: Loading document with extension {ext}")
-            # 选择合适的加载器
+            # Choose the appropriate loader
             if ext == ".pdf":
                 loader = PyPDFLoader(local_temp_path)
             elif ext == ".docx":
                 loader = Docx2txtLoader(local_temp_path)
             elif ext == ".md":
                 loader = UnstructuredMarkdownLoader(local_temp_path)
-            else:  # 默认使用文本加载器
+            else:  # Default text loader is used
                 loader = TextLoader(local_temp_path)
             
             logger.info(f"Task {task_id}: Loading document content")
@@ -317,9 +329,9 @@ async def process_document_background(
             chunks = text_splitter.split_documents(documents)
             logger.info(f"Task {task_id}: Document split into {len(chunks)} chunks")
             
-            # 3. 创建向量存储
+            # 3. Create Vector Storage
             logger.info(f"Task {task_id}: Initializing vector store")
-            embeddings = get_embeddings()
+            embeddings = create_embeddings()
             
             vector_store = VectorStoreFactory.create(
                 store_type=settings.VECTOR_STORE_TYPE,
@@ -327,11 +339,11 @@ async def process_document_background(
                 embedding_function=embeddings,
             )
             
-            # 4. 将临时文件移动到永久目录
+           # 4. Move temporary files to permanent directory
             permanent_path = f"kb_{kb_id}/{file_name}"
             try:
                 logger.info(f"Task {task_id}: Moving file to permanent storage")
-                # 复制到永久目录
+                #Copy to permanent directory
                 source = CopySource(settings.MINIO_BUCKET_NAME, temp_path)
                 minio_client.copy_object(
                     bucket_name=settings.MINIO_BUCKET_NAME,
@@ -352,7 +364,7 @@ async def process_document_background(
                 logger.error(f"Task {task_id}: {error_msg}")
                 raise Exception(error_msg)
             
-            # 5. 创建文档记录
+            # 5. Create Document Records
             logger.info(f"Task {task_id}: Creating document record")
             document = Document(
                 file_name=file_name,
@@ -367,10 +379,10 @@ async def process_document_background(
             db.refresh(document)
             logger.info(f"Task {task_id}: Document record created with ID {document.id}")
             
-            # 6. 存储文档块
+            # 6. Store document blocks
             logger.info(f"Task {task_id}: Storing document chunks")
             for i, chunk in enumerate(chunks):
-                # 为每个 chunk 生成唯一的 ID
+                # Generate a unique ID for each chunk
                 chunk_id = hashlib.sha256(
                     f"{kb_id}:{file_name}:{chunk.page_content}".encode()
                 ).hexdigest()
@@ -381,7 +393,7 @@ async def process_document_background(
                 chunk.metadata["chunk_id"] = chunk_id
                 
                 doc_chunk = DocumentChunk(
-                    id=chunk_id,  # 添加 ID 字段
+                    id=chunk_id,
                     document_id=document.id,
                     kb_id=kb_id,
                     file_name=file_name,
@@ -396,21 +408,21 @@ async def process_document_background(
                 db.add(doc_chunk)
                 if i > 0 and i % 100 == 0:
                     logger.info(f"Task {task_id}: Stored {i} chunks")
-                    db.commit()  # 每 100 条提交一次，避免事务太大
+                    db.commit() 
             
-            # 7. 添加到向量存储
+            # 7. Add to Vector Storage
             logger.info(f"Task {task_id}: Adding chunks to vector store")
             vector_store.add_documents(chunks)
-            # 移除 persist() 调用，因为新版本不需要
+            #Remove the persist() call, as the new version does not require it.
             logger.info(f"Task {task_id}: Chunks added to vector store")
             
-            # 8. 更新任务状态
+            # 8. Update Task Status
             logger.info(f"Task {task_id}: Updating task status to completed")
             task.status = "completed"
-            task.document_id = document.id  # 更新为新创建的文档ID
+            task.document_id = document.id  # Update for the newly created document ID
             
-            # 9. 更新上传记录状态
-            upload = task.document_upload  # 直接通过关系获取
+            # 9. Update upload record status
+            upload = task.document_upload   # Directly obtain through relationships
             if upload:
                 logger.info(f"Task {task_id}: Updating upload record status to completed")
                 upload.status = "completed"
@@ -419,7 +431,7 @@ async def process_document_background(
             logger.info(f"Task {task_id}: Processing completed successfully")
             
         finally:
-            # 清理本地临时文件
+            # Clean up local temporary files
             try:
                 if os.path.exists(local_temp_path):
                     logger.info(f"Task {task_id}: Cleaning up local temp file")
@@ -435,7 +447,7 @@ async def process_document_background(
         task.error_message = str(e)
         db.commit()
         
-        # 清理临时文件
+        # Clean up temporary files
         try:
             logger.info(f"Task {task_id}: Cleaning up temporary file after error")
             minio_client.remove_object(

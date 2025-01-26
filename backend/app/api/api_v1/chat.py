@@ -118,6 +118,9 @@ async def create_message(
     
     # Get knowledge base IDs
     knowledge_base_ids = [kb.id for kb in chat.knowledge_bases]
+    
+    # Using the default LLM provider and model
+    model = settings.OPENAI_PROVIDER.chat_model if settings.DEFAULT_LLM_PROVIDER == "openai" else settings.OLLAMA_PROVIDER.chat_model
 
     async def response_stream():
         async for chunk in generate_response(
@@ -125,6 +128,7 @@ async def create_message(
             messages=messages,
             knowledge_base_ids=knowledge_base_ids,
             chat_id=chat_id,
+            model=model,
             db=db
         ):
             yield chunk
