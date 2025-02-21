@@ -9,6 +9,7 @@
     <a href="https://github.com/rag-web-ui/rag-web-ui/blob/main/LICENSE"><img src="https://img.shields.io/github/license/rag-web-ui/rag-web-ui" alt="License"></a>
     <a href="#"><img src="https://img.shields.io/badge/python-3.9+-blue.svg" alt="Python"></a>
     <a href="#"><img src="https://img.shields.io/badge/node-%3E%3D18-green.svg" alt="Node"></a>
+    <a href="#"><img src="https://github.com/rag-web-ui/rag-web-ui/actions/workflows/test.yml/badge.svg" alt="CI"></a>
     <a href="#"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
   </p>
 
@@ -210,9 +211,9 @@ docker compose up -d --build
 
 服务启动后，可以通过以下地址访问：
 
-- 🌐 前端界面: http://localhost:3000
-- 📚 API 文档: http://localhost:8000/redoc
-- 💾 MinIO 控制台: http://localhost:9001
+- 🌐 前端界面: http://127.0.0.1.nip.io
+- 📚 API 文档: http://127.0.0.1.nip.io/redoc
+- 💾 MinIO 控制台: http://127.0.0.1.nip.io:9001
 
 ## 🏗️ 技术架构
 
@@ -243,31 +244,12 @@ docker compose up -d --build
 
 ## 📖 开发指南
 
-### 后端开发
-
+使用 docker compose 启动开发环境，可热更新
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # Linux/macOS
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+docker compose -f docker-compose.dev.yml up -d --build
 ```
 
-### 前端开发
-
-```bash
-cd frontend
-pnpm install
-pnpm dev
-```
-
-### 数据库迁移
-
-```bash
-cd backend
-alembic revision --autogenerate -m "migration message"
-alembic upgrade head
-```
+访问地址：http://127.0.0.1.nip.io
 
 ## 🔧 配置说明
 
@@ -284,17 +266,17 @@ alembic upgrade head
 
 ### LLM 配置
 
-| 配置项            | 说明                  | 默认值                    | 适用场景             |
-| ----------------- | --------------------- | ------------------------- | -------------------- |
-| CHAT_PROVIDER     | LLM 服务提供商        | openai                    | ✅                    |
-| OPENAI_API_KEY    | OpenAI API 密钥       | -                         | 使用 OpenAI 时必填   |
-| OPENAI_API_BASE   | OpenAI API 基础 URL   | https://api.openai.com/v1 | 使用 OpenAI 时可选   |
-| OPENAI_MODEL      | OpenAI 模型名称       | gpt-4                     | 使用 OpenAI 时必填   |
-| DEEPSEEK_API_KEY  | DeepSeek API 密钥     | -                         | 使用 DeepSeek 时必填 |
-| DEEPSEEK_API_BASE | DeepSeek API 基础 URL | -                         | 使用 DeepSeek 时必填 |
-| DEEPSEEK_MODEL    | DeepSeek 模型名称     | -                         | 使用 DeepSeek 时必填 |
-| OLLAMA_API_BASE   | Ollama API 基础 URL   | http://localhost:11434    | 使用 Ollama 时必填   |
-| OLLAMA_MODEL      | Ollama 模型名称       | -                         | 使用 Ollama 时必填   |
+| 配置项            | 说明                  | 默认值                    | 适用场景                               |
+| ----------------- | --------------------- | ------------------------- | -------------------------------------- |
+| CHAT_PROVIDER     | LLM 服务提供商        | openai                    | ✅                                      |
+| OPENAI_API_KEY    | OpenAI API 密钥       | -                         | 使用 OpenAI 时必填                     |
+| OPENAI_API_BASE   | OpenAI API 基础 URL   | https://api.openai.com/v1 | 使用 OpenAI 时可选                     |
+| OPENAI_MODEL      | OpenAI 模型名称       | gpt-4                     | 使用 OpenAI 时必填                     |
+| DEEPSEEK_API_KEY  | DeepSeek API 密钥     | -                         | 使用 DeepSeek 时必填                   |
+| DEEPSEEK_API_BASE | DeepSeek API 基础 URL | -                         | 使用 DeepSeek 时必填                   |
+| DEEPSEEK_MODEL    | DeepSeek 模型名称     | -                         | 使用 DeepSeek 时必填                   |
+| OLLAMA_API_BASE   | Ollama API 基础 URL   | http://localhost:11434    | 使用 Ollama 时必填, 注意需要先拉取模型 |
+| OLLAMA_MODEL      | Ollama 模型名称       | -                         | 使用 Ollama 时必填                     |
 
 ### Embedding 配置
 
@@ -349,7 +331,6 @@ alembic upgrade head
 - 遵循 [Python PEP 8](https://pep8.org/) 代码规范
 - 遵循 [Conventional Commits](https://www.conventionalcommits.org/) 提交规范
 
-
 ### 🚧 Roadmap
 
 - [x] 知识库 API 集成
@@ -362,6 +343,10 @@ alembic upgrade head
 ## 补充
 
 本项目仅用于学习交流 RAG ，请勿用于商业用途，不具备在生产环境使用的条件，还在持续开发中。
+
+## 🔧 常见问题
+
+为了方便大家使用，我们整理了常见问题和解决方案，请参考[Troubleshooting Guide](docs/troubleshooting.md)。
 
 ## 📄 许可证
 

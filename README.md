@@ -10,6 +10,7 @@
     <a href="#"><img src="https://img.shields.io/badge/python-3.9+-blue.svg" alt="Python"></a>
     <a href="#"><img src="https://img.shields.io/badge/node-%3E%3D18-green.svg" alt="Node"></a>
     <a href="#"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
+    <a href="#"><img src="https://github.com/rag-web-ui/rag-web-ui/actions/workflows/test.yml/badge.svg" alt="CI"></a>
   </p>
 
   <p>
@@ -207,9 +208,9 @@ docker compose up -d --build
 
 Access the following URLs after service startup:
 
-- 🌐 Frontend UI: http://localhost:3000
-- 📚 API Documentation: http://localhost:8000/redoc
-- 💾 MinIO Console: http://localhost:9001
+- 🌐 Frontend UI: http://127.0.0.1.nip.io
+- 📚 API Documentation: http://127.0.0.1.nip.io/redoc
+- 💾 MinIO Console: http://127.0.0.1.nip.io:9001
 
 ## 🏗️ Architecture
 
@@ -240,31 +241,10 @@ The system is optimized in the following aspects:
 
 ## 📖 Development Guide
 
-### Backend Development
-
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # Linux/macOS
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+docker compose -f docker-compose.dev.yml up -d --build
 ```
 
-### Frontend Development
-
-```bash
-cd frontend
-pnpm install
-pnpm dev
-```
-
-### Database Migration
-
-```bash
-cd backend
-alembic revision --autogenerate -m "migration message"
-alembic upgrade head
-```
 ## 🔧 Configuration
 
 ### Core Configuration
@@ -322,18 +302,6 @@ alembic upgrade head
 | MINIO_SECRET_KEY  | MinIO Secret Key     | minioadmin     | ✅        |
 | MINIO_BUCKET_NAME | MinIO Bucket Name    | documents      | ✅        |
 
-### Frontend Configuration
-
-| Parameter            | Description                   | Default               | Required |
-| ------------------- | ----------------------------- | --------------------- | -------- |
-| NEXT_PUBLIC_API_URL | Backend API URL               | http://localhost:8000 | ✅        |
-
-### CORS Configuration
-
-| Parameter              | Description                                          | Default | Required |
-| --------------------- | ---------------------------------------------------- | ------- | -------- |
-| ADDITIONAL_CORS_ORIGINS| Additional allowed origins for CORS (comma-separated) | -       | ❌        |
-
 ### Other Configuration
 
 | Parameter | Description      | Default       | Required |
@@ -357,7 +325,6 @@ We welcome community contributions!
 - Follow [Python PEP 8](https://pep8.org/) coding standards
 - Follow [Conventional Commits](https://www.conventionalcommits.org/)
 
-
 ### 🚧 Roadmap
 
 - [x] Knowledge Base API Integration
@@ -365,6 +332,10 @@ We welcome community contributions!
 - [ ] Multi-path Retrieval
 - [x] Support Multiple Models
 - [x] Support Multiple Vector Databases
+
+## 🔧 Troubleshooting
+
+For common issues and solutions, please refer to our [Troubleshooting Guide](docs/troubleshooting.md).
 
 ## 📄 License
 
